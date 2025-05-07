@@ -111,7 +111,7 @@ void displaceAtoms(const string& inputFile){
     
     
     string lineContents;
-    ofstream outputFile("/home/iananderson/Documents/GradSchool/TaC_Screw_Dislocations/modified.lmp");
+    ofstream outputFile("");
     ifstream inputData(inputFile);
     int modifyFlag = 0;
     
@@ -176,7 +176,7 @@ int main() {
     double u_z_inf = screwDipoleCorrection(x, y, a, b, burgers, loc1, loc2, N);
     cout << u_z_inf << "\n";
 
-    displaceAtoms("/home/iananderson/Documents/GradSchool/TaC_Screw_Dislocations/core_structure.lmp");
+    displaceAtoms("");
     
     return 0;
 }
