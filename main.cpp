@@ -68,6 +68,12 @@ double screwDipoleCorrection(double x, double y, double a, double b, double burg
 
 }
 
+double screwDipole(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N){
+    return screwDipoleImage(x, y, a, b, burgers, loc1, loc2, N) - screwDipoleCorrection(x, y, a, b, burgers, loc1, loc2, N);
+
+
+}
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -107,11 +113,11 @@ string recombine(const vector<string>& words) {
     return oss.str();
 }
 
-void displaceAtoms(const string& inputFile){
+void displaceAtoms(string &inputFile, string &outputFilePath, double a, double b, double burgers, double loc1, double loc2, int N){
     
     
     string lineContents;
-    ofstream outputFile("");
+    ofstream outputFile(outputFilePath);
     ifstream inputData(inputFile);
     int modifyFlag = 0;
     
@@ -140,8 +146,9 @@ void displaceAtoms(const string& inputFile){
 
             double x_value = stod(words[2]);
             double y_value = stod(words[3]);
-            double u_z = screwDisplacement(x_value, y_value, 5.718);
-
+           
+            double u_z = screwDipole(x_value, y_value, a, b, burgers, loc1, loc2, N);
+            
             words[4] = to_string(stof(words[4])+u_z);
 
             string newLine = recombine(words);
@@ -160,23 +167,43 @@ void displaceAtoms(const string& inputFile){
 
 
 int main() {
-    double x = 2;
-    double y = 1;
-    double a = 2;
-    double b = 1;
-    double burgers = 1;
-    double loc1 = 0.5;
-    double loc2 = -0.5;
-    int N = 10;
-    
-    double u_z  = screwDisplacement(x, y, b);
-    
-    cout << "Displacement in z-direction: " << u_z << "\n";
-    
-    double u_z_inf = screwDipoleCorrection(x, y, a, b, burgers, loc1, loc2, N);
-    cout << u_z_inf << "\n";
+    double a;
+    double b;
+    double burgers;
+    double loc1;
+    double loc2;
+    int N;
+    string inputFile;
+    string outputFile;
 
-    displaceAtoms("");
+
+    
+   cout << "Enter length of a vector: \n";
+   cin >> a;
+
+   cout << "Enter length of b vector: \n";
+   cin >> b;
+
+   cout << "Enter length of burgers vector: \n";
+   cin >> burgers;
+
+   cout << "Enter location of dislocation 1: \n";
+   cin >>  loc1;
+   
+   cout << "Enter location of dislocation 2: \n";
+   cin >>  loc2;
+
+   cout << "Enter number of images: \n";
+   cin >>  N;
+
+   cout << "Enter path to input file: \n";
+   cin >>  inputFile;
+ 
+   cout << "Enter path to output file: \n";
+   cin >>  outputFile;
+
+   displaceAtoms(inputFile, outputFile, a, b, burgers, loc1, loc2, N);
+
     
     return 0;
 }
