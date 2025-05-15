@@ -204,7 +204,7 @@ int main() {
 
    displaceAtoms(inputFile, outputFile, a, b, burgers, loc1, loc2, N);
 
-   cout << edgeCorrection_x(0.5, 0.5, 2, 2, 1, -1, 1, 0.25, 10) << "\n";
+   cout << edgeDisplacement_y(0.5, 0.5, 1, -1, 1,0.25) << "\n";
     
     return 0;
 }

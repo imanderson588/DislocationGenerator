@@ -50,3 +50,16 @@ double edgeCorrection_x(double x, double y, double a, double b, double loc1, dou
 
 
 }
+
+double edgeDisplacement_y(double x, double y, double loc1, double loc2, double burgers, double nu){
+
+    double factor1 = -burgers/(2*pi);
+    double term11 = ((1-2*nu)/(4*(1-nu)))*log(pow(x-loc1, 2)+pow(y, 2));
+    double term12 = (pow(x-loc1, 2)- pow(y, 2))/(4*(1-nu)*(pow(x-loc1, 2)+ pow(y, 2)));
+    double factor2 = burgers/(2*pi);
+    double term21 = ((1-2*nu)/(4*(1-nu)))*log(pow(x-loc2, 2)+pow(y, 2));
+    double term22 = (pow(x-loc2, 2)-pow(y, 2))/(4*(1-nu)*(pow(x-loc2, 2)+pow(y, 2)));
+    return (factor1*(term11+term12))+(factor2*(term21+term22));
+
+
+}
