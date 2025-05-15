@@ -11,11 +11,11 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "EdgeDisplacement.h"
 
 
 using namespace std;
 
-const double pi = M_PI;
 
 
 //Functions for screw dislocation dipole //////////////////////////////////////////////////////////////////
@@ -204,6 +204,7 @@ int main() {
 
    displaceAtoms(inputFile, outputFile, a, b, burgers, loc1, loc2, N);
 
+   cout << edgeCorrection_x(0.5, 0.5, 2, 2, 1, -1, 1, 0.25, 10) << "\n";
     
     return 0;
 }
