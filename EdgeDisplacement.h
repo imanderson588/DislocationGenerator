@@ -18,6 +18,9 @@ double edgeCorrection_x(double x, double y, double a, double b, double loc1, dou
 
 double edgeDisplacement_y(double x, double y, double loc1, double loc2, double burgers, double nu);
 
+double edgeImage_y(double x, double y, double a, double b, double loc1, double loc2, double burgers, double nu, int N);
+
+double edgeCorrection_y(double x, double y, double a, double b, double loc1, double loc2, double burgers, double nu, int N);
 
 #endif
 
