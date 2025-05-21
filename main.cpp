@@ -14,6 +14,7 @@
 #include "EdgeDisplacement.h"
 #include "ScrewDisplacement.h"
 #include "ParseLAMMPS.h"
+#include "ParseVASP.h"
 
 using namespace std;
 
@@ -56,7 +57,7 @@ int main()
     cout << "Enter path to output file: \n";
     cin >> outputFile;
 
-    displaceAtoms(inputFile, outputFile, a, b, burgers, loc1, loc2, nu, N);
+    displaceAtomsVasp(inputFile, outputFile, a, b, burgers, loc1, loc2, nu, N);
 
     return 0;
 }
