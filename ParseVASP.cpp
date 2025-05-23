@@ -3,7 +3,7 @@
 #include "EdgeDisplacement.h"
 #include "ScrewDisplacement.h"
 
-void displaceAtomsVasp(string &inputFile, string &outputFilePath, double a, double b, double burgers, double loc1, double loc2, double nu, int N)
+void displaceAtomsVasp(string &inputFile, string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N)
 {
 
     string lineContents;
@@ -77,8 +77,8 @@ void displaceAtomsVasp(string &inputFile, string &outputFilePath, double a, doub
             double x_value = stod(words[0]) * xLength;
             double y_value = stod(words[1]) * yLength;
 
-            double u_x = edgeDisplacement_x(x_value, y_value, loc1, loc2, burgers, nu);
-            double u_y = edgeDisplacement_y(x_value, y_value, loc1, loc2, burgers, nu);
+            double u_x = edgeDisplacement_x(x_value, y_value, x1, y1, x2, y2, burgers, nu);
+            double u_y = edgeDisplacement_y(x_value, y_value, x1, y1, x2, y2, burgers, nu);
 
             words[0] = to_string((x_value + u_x) / xLength);
             words[1] = to_string((y_value + u_y) / yLength);

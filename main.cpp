@@ -23,8 +23,10 @@ int main()
     double a;
     double b;
     double burgers;
-    double loc1;
-    double loc2;
+    double x1;
+    double y1;
+    double x2;
+    double y2;
     double nu;
     int N;
     string inputFile;
@@ -39,11 +41,17 @@ int main()
     cout << "Enter length of burgers vector: \n";
     cin >> burgers;
 
-    cout << "Enter location of dislocation 1: \n";
-    cin >> loc1;
+    cout << "Enter x location of dislocation 1: \n";
+    cin >> x1;
 
-    cout << "Enter location of dislocation 2: \n";
-    cin >> loc2;
+    cout << "Enter y location of dislocation 1: \n";
+    cin >> y1;
+
+    cout << "Enter x location of dislocation 2: \n";
+    cin >> x2;
+
+    cout << "Enter y location of dislocation 2: \n";
+    cin >> y2;
 
     cout << "Enter poisson ratio: \n";
     cin >> nu;
@@ -57,7 +65,7 @@ int main()
     cout << "Enter path to output file: \n";
     cin >> outputFile;
 
-    displaceAtomsVasp(inputFile, outputFile, a, b, burgers, loc1, loc2, nu, N);
+    displaceAtoms(inputFile, outputFile, a, b, burgers, x1, y1, x2, y2, nu, N);
 
     return 0;
 }

@@ -10,6 +10,6 @@
 
 using namespace std;
 
-void displaceAtomsVasp(string &inputFile, string &outputFilePath, double a, double b, double burgers, double loc1, double loc2, double nu, int N);
+void displaceAtomsVasp(string &inputFile, string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N);
 
 #endif

@@ -31,7 +31,7 @@ string recombine(const vector<string> &words)
     return oss.str();
 }
 
-void displaceAtoms(string &inputFile, string &outputFilePath, double a, double b, double burgers, double loc1, double loc2, double nu, int N)
+void displaceAtoms(string &inputFile, string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N)
 {
 
     string lineContents;
@@ -40,6 +40,7 @@ void displaceAtoms(string &inputFile, string &outputFilePath, double a, double b
     int modifyFlag = 0;
 
     while (getline(inputData, lineContents))
+
     {
 
         if (lineContents == "Atoms # atomic")
@@ -70,8 +71,8 @@ void displaceAtoms(string &inputFile, string &outputFilePath, double a, double b
             double x_value = stod(words[2]);
             double y_value = stod(words[3]);
 
-            double u_x = edgeDisplacement_x(x_value, y_value, loc1, loc2, burgers, nu);
-            double u_y = edgeDisplacement_y(x_value, y_value, loc1, loc2, burgers, nu);
+            double u_x = totEdge_x(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N);
+            double u_y = totEdge_y(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N);
 
             words[2] = to_string(stof(words[2]) + u_x);
             words[3] = to_string(stof(words[3]) + u_y);
