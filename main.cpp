@@ -65,6 +65,8 @@ int main()
     cout << "Enter path to output file: \n";
     cin >> outputFile;
 
+    cout << totEdge_y(-0.5, -0.2, 2, 1, -0.5, 0, 0.5, 0, 2.8, 0.24, 10) << "\n";
+
     displaceAtoms(inputFile, outputFile, a, b, burgers, x1, y1, x2, y2, nu, N);
 
     return 0;

@@ -77,6 +77,10 @@ void displaceAtoms(string &inputFile, string &outputFilePath, double a, double b
             words[2] = to_string(stof(words[2]) + u_x);
             words[3] = to_string(stof(words[3]) + u_y);
 
+            // double u_z = screwDipole(x_value, y_value, a, b, burgers, x1, x2, N);
+
+            // words[4] = to_string(stof(words[4]) + u_z);
+
             string newLine = recombine(words);
             outputFile << newLine << "\n";
         }
