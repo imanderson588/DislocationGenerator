@@ -63,8 +63,9 @@ void displaceAtomsVasp(string &inputFile, string &outputFilePath, double a, doub
         if (lineNumber == 6)
         {
             vector<string> words = splitBySpaces(lineContents);
-            numAtoms = stoi(words[0]) + stoi(words[1]);
-            outputFile << lineContents << "\n";
+            numAtoms = stoi(words[0]); //+ stoi(words[1]);
+            outputFile
+                << lineContents << "\n";
             lineNumber++;
             continue;
         }
@@ -77,8 +78,8 @@ void displaceAtomsVasp(string &inputFile, string &outputFilePath, double a, doub
             double x_value = stod(words[0]) * xLength;
             double y_value = stod(words[1]) * yLength;
 
-            double u_x = edgeDisplacement_x(x_value, y_value, x1, y1, x2, y2, burgers, nu);
-            double u_y = edgeDisplacement_y(x_value, y_value, x1, y1, x2, y2, burgers, nu);
+            double u_x = totEdge_x(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N);
+            double u_y = totEdge_y(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N);
 
             words[0] = to_string((x_value + u_x) / xLength);
             words[1] = to_string((y_value + u_y) / yLength);
