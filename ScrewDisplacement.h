@@ -18,20 +18,8 @@ double screwDipoleImage(double x, double y, double a, double b, double burgers, 
 
 double screwDipoleCorrection(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N);
 
+double screwDipoleTilt(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N);
+
 double screwDipole(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif

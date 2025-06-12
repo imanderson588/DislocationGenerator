@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void displaceAtoms(string &inputFile, string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N);
+void displaceAtoms(int dislocationType, string &inputFile, string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N);
 
 vector<string> splitBySpaces(const string &line);
 

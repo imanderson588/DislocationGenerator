@@ -15,6 +15,7 @@
 #include "ScrewDisplacement.h"
 #include "ParseLAMMPS.h"
 #include "ParseVASP.h"
+#include "SingleDislocations.h"
 
 using namespace std;
 
@@ -29,8 +30,12 @@ int main()
     double y2;
     double nu;
     int N;
+    int dislocationType;
     string inputFile;
     string outputFile;
+
+    cout << "Enter type of dislocation. 0 for Edge 1 for screw \n";
+    cin >> dislocationType;
 
     cout << "Enter length of a vector: \n";
     cin >> a;
@@ -65,9 +70,7 @@ int main()
     cout << "Enter path to output file: \n";
     cin >> outputFile;
 
-    cout << totEdge_y(-0.5, -0.2, 2, 1, -0.5, 0, 0.5, 0, 2.8, 0.24, 10) << "\n";
-
-    displaceAtoms(inputFile, outputFile, a, b, burgers, x1, y1, x2, y2, nu, N);
+    displaceAtoms(dislocationType, inputFile, outputFile, a, b, burgers, x1, y1, x2, y2, nu, N);
 
     return 0;
 }

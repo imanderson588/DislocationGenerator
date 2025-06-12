@@ -53,7 +53,13 @@ double screwDipoleCorrection(double x, double y, double a, double b, double burg
     return correction;
 }
 
+double screwDipoleTilt(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N)
+{
+    double u_z = b * (0.5 * (y / b));
+    return u_z;
+}
+
 double screwDipole(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N)
 {
-    return screwDipoleImage(x, y, a, b, burgers, loc1, loc2, N) - screwDipoleCorrection(x, y, a, b, burgers, loc1, loc2, N);
+    return screwDipoleImage(x, y, a, b, burgers, loc1, loc2, N) - screwDipoleCorrection(x, y, a, b, burgers, loc1, loc2, N) - screwDipoleTilt(x, y, a, b, burgers, loc1, loc2, N);
 }

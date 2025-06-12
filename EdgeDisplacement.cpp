@@ -34,22 +34,29 @@ double edgeImage_x(double x, double y, double a, double b, double x1, double y1,
     return image_sum;
 }
 
-double edgeCorrection_x(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
+/*double edgeCorrection_x(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
 {
 
-    double s_x = edgeImage_x(a / 2, -b / 2, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeImage_x(-a / 2, -b / 2, a, b, x1, y1, x2, y2, burgers, nu, N);
+    // double s_x = edgeImage_x(a / 2, -b / 2, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeImage_x(-a / 2, -b / 2, a, b, x1, y1, x2, y2, burgers, nu, N);
     double s_y = edgeImage_x(a / 2, -b / 2, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeImage_x(a / 2, b / 2, a, b, x1, y1, x2, y2, burgers, nu, N);
-    double c_x = x;
+    // double c_x = x;
     double c_y = y;
-    double correction = (s_x * c_x) + (s_y * c_y);
+    double correction = (s_y * c_y); //(s_x * c_x) + (s_y * c_y);
 
     return correction;
+}*/
+
+double edgeCorrection_x(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
+{
+    double s_xx = (edgeImage_x(a / 2, y, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeImage_x(-a / 2, y, a, b, x1, y1, x2, y2, burgers, nu, N)) / a;
+    double s_xy = (edgeImage_x(x, b / 2, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeImage_x(x, -b / 2, a, b, x1, y1, x2, y2, burgers, nu, N)) / b;
+    return s_xx * x + s_xy * y;
 }
 
 double totEdge_x(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
 {
 
-    return edgeImage_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N) + edgeCorrection_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N);
+    return edgeImage_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeCorrection_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N);
 }
 
 double edgeDisplacement_y(double x, double y, double x1, double y1, double x2, double y2, double burgers, double nu)
@@ -84,20 +91,33 @@ double edgeImage_y(double x, double y, double a, double b, double x1, double y1,
     return image_sum;
 }
 
-double edgeCorrection_y(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
+/*double edgeCorrection_y(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
 {
 
     double s_x = edgeImage_y(-a / 2, b / 2, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeImage_y(a / 2, b / 2, a, b, x1, y1, x2, y2, burgers, nu, N);
-    double s_y = edgeImage_y(-a / 2, -b / 2, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeImage_y(-a / 2, b / 2, a, b, x1, y1, x2, y2, burgers, nu, N);
+    // double s_y = edgeImage_y(-a / 2, -b / 2, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeImage_y(-a / 2, b / 2, a, b, x1, y1, x2, y2, burgers, nu, N);
     double c_x = x;
-    double c_y = y;
-    double correction = (s_x * c_x) + (s_y * c_y);
+    // double c_y = y;
+    double correction = (s_x * c_x); // + (s_y * c_y);
 
     return correction;
+}*/
+
+double edgeCorrection_y(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
+{
+    double s_yx = (edgeImage_y(a / 2, y, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeImage_y(-a / 2, y, a, b, x1, y1, x2, y2, burgers, nu, N)) / a;
+    double s_yy = (edgeImage_y(x, b / 2, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeImage_y(x, -b / 2, a, b, x1, y1, x2, y2, burgers, nu, N)) / b;
+    return s_yx * x + s_yy * y;
+}
+
+double edgeDipoleTilt(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N)
+{
+    double u_y = b * (y / b);
+    return u_y;
 }
 
 double totEdge_y(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
 {
-    double output = edgeImage_y(x, y, a, b, x1, y1, x2, y2, burgers, nu, N) + (edgeCorrection_y(x, y, a, b, x1, y1, x2, y2, burgers, nu, N) / 2);
+    double output = edgeImage_y(x, y, a, b, x1, y1, x2, y2, burgers, nu, N) - (edgeCorrection_y(x, y, a, b, x1, y1, x2, y2, burgers, nu, N));
     return output;
 }

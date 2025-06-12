@@ -31,7 +31,7 @@ string recombine(const vector<string> &words)
     return oss.str();
 }
 
-void displaceAtoms(string &inputFile, string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N)
+void displaceAtoms(int dislocationType, string &inputFile, string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N)
 {
 
     string lineContents;
@@ -70,17 +70,24 @@ void displaceAtoms(string &inputFile, string &outputFilePath, double a, double b
 
             double x_value = stod(words[2]);
             double y_value = stod(words[3]);
+            if (dislocationType == 0)
+            {
+                // for screw dislocations z axis needs to along x for proper tilt in lammps
+                double u_x = totEdge_x(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N); // + totEdge_x(x_value, y_value, a, b, x1, -y1, x2, -y2, -burgers, nu, N);
+                double u_y = totEdge_y(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N); // + totEdge_y(x_value, y_value, a, b, x1, -y1, x2, -y2, -burgers, nu, N);
+                double u_y2 = edgeDipoleTilt(x_value, y_value, a, b, burgers, x1, x2, N);
+                words[2] = to_string(stof(words[2]) + u_x);
+                words[3] = to_string(stof(words[3]) + u_y);
+                words[3] = to_string(stof(words[3]) + u_y2);
+            }
+            if (dislocationType == 1)
+            {
+                // words[2] = to_string(stof(words[2]) + u_z);
 
-            // double u_x = totEdge_x(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N) + totEdge_x(x_value, y_value, a, b, x1, y1, x2, y2, -burgers, nu, N);
-            // double u_y = totEdge_y(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N) + totEdge_y(x_value, y_value, a, b, x1, y1, x2, y2, -burgers, nu, N);
+                double u_z = screwDipole(x_value, y_value, a, b, burgers, x1, x2, N);
 
-            // words[2] = to_string(stof(words[2]) + u_x);
-            // words[3] = to_string(stof(words[3]) + u_y);
-
-            double u_z = screwDipole(x_value, y_value, a, b, burgers, x1, x2, N);
-
-            words[4] = to_string(stof(words[4]) + u_z);
-
+                words[2] = to_string(stof(words[2]) + u_z);
+            }
             string newLine = recombine(words);
             outputFile << newLine << "\n";
         }

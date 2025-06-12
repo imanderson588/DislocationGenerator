@@ -20,6 +20,8 @@ double edgeDisplacement_y(double x, double y, double x1, double y1, double x2, d
 
 double edgeImage_y(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N);
 
+double edgeDipoleTilt(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N);
+
 double edgeCorrection_y(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N);
 
 double totEdge_y(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N);
