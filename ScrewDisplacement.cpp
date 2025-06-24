@@ -55,7 +55,7 @@ double screwDipoleCorrection(double x, double y, double a, double b, double burg
 
 double screwDipoleTilt(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N)
 {
-    double u_z = b * (0.5 * (y / b));
+    double u_z = b * ((y / b));
     return u_z;
 }
 

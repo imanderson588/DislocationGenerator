@@ -1,6 +1,7 @@
 #include "ParseLAMMPS.h"
 #include "EdgeDisplacement.h"
 #include "ScrewDisplacement.h"
+#include "SingleDislocations.h"
 
 vector<string> splitBySpaces(const string &line)
 {
@@ -70,11 +71,12 @@ void displaceAtoms(int dislocationType, string &inputFile, string &outputFilePat
 
             double x_value = stod(words[2]);
             double y_value = stod(words[3]);
+            double z_value = stod(words[4]);
             if (dislocationType == 0)
             {
-                // for screw dislocations z axis needs to along x for proper tilt in lammps
-                double u_x = totEdge_x(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N); // + totEdge_x(x_value, y_value, a, b, x1, -y1, x2, -y2, -burgers, nu, N);
-                double u_y = totEdge_y(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N); // + totEdge_y(x_value, y_value, a, b, x1, -y1, x2, -y2, -burgers, nu, N);
+                // Edge displacements
+                double u_x = totEdge_x(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N);
+                double u_y = totEdge_y(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N);
                 double u_y2 = edgeDipoleTilt(x_value, y_value, a, b, burgers, x1, x2, N);
                 words[2] = to_string(stof(words[2]) + u_x);
                 words[3] = to_string(stof(words[3]) + u_y);
@@ -82,11 +84,23 @@ void displaceAtoms(int dislocationType, string &inputFile, string &outputFilePat
             }
             if (dislocationType == 1)
             {
+                // Screw Displacements
                 // words[2] = to_string(stof(words[2]) + u_z);
 
                 double u_z = screwDipole(x_value, y_value, a, b, burgers, x1, x2, N);
 
-                words[2] = to_string(stof(words[2]) + u_z);
+                words[4] = to_string(stof(words[4]) + u_z);
+            }
+
+            if (dislocationType == 3)
+
+            {
+                // Single edge displacement
+                double u_x = singleEdgeDisplacement_x(x_value, y_value, burgers, nu);
+                double u_y = singleEdgeDisplacement_y(x_value, y_value, burgers, nu);
+
+                words[2] = to_string(stof(words[2]) + u_x);
+                words[3] = to_string(stof(words[3]) + u_y);
             }
             string newLine = recombine(words);
             outputFile << newLine << "\n";

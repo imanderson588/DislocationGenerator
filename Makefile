@@ -3,7 +3,7 @@ CXX = g++
 CXXFLAGS = -std=c++11 
 
 # Source and object files
-SRCS = main.cpp EdgeDisplacement.cpp ScrewDisplacement.cpp ParseLAMMPS.cpp ParseVASP.cpp
+SRCS = main.cpp EdgeDisplacement.cpp ScrewDisplacement.cpp ParseLAMMPS.cpp ParseVASP.cpp SingleDislocations.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Output executable name

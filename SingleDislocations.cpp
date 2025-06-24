@@ -1,4 +1,5 @@
 #include "SingleDislocations.h"
+const double pi = M_PI;
 
 double singleEdgeDisplacement_x(double x, double y, double burgers, double nu)
 {
