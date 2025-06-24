@@ -96,8 +96,8 @@ void displaceAtoms(int dislocationType, string &inputFile, string &outputFilePat
 
             {
                 // Single edge displacement
-                double u_x = singleEdgeDisplacement_x(x_value, y_value, burgers, nu);
-                double u_y = singleEdgeDisplacement_y(x_value, y_value, burgers, nu);
+                double u_x = totSingleEdge_x(x_value, y_value, a, b, burgers, nu, N);
+                double u_y = totSingleEdge_y(x_value, y_value, a, b, burgers, nu, N);
 
                 words[2] = to_string(stof(words[2]) + u_x);
                 words[3] = to_string(stof(words[3]) + u_y);

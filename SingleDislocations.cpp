@@ -11,6 +11,40 @@ double singleEdgeDisplacement_x(double x, double y, double burgers, double nu)
     return (factor * (theta + term));
 }
 
+double singleEdgeImage_x(double x, double y, double a, double b, double burgers, double nu, int N)
+{
+    double image_sum = 0;
+    double x_update = 0;
+    double y_update = 0;
+
+    for (double i = -N; i <= N; i++)
+    {
+        for (double j = -N; j <= N; j++)
+        {
+            vector<double> R = {i * a, j * b};
+            x_update = x - R[0];
+            y_update = y - R[1];
+            image_sum += singleEdgeDisplacement_x(x_update, y_update, burgers, nu);
+        }
+    }
+    return image_sum;
+}
+
+double singleEdgeCorrection_x(double x, double y, double a, double b, double burgers, double nu, int N)
+{
+    double s_xx = (singleEdgeImage_x(a / 2, y, a, b, burgers, nu, N) - singleEdgeImage_x(-a / 2, y, a, b, burgers, nu, N)) / a;
+    double s_xy = (singleEdgeImage_x(x, b / 2, a, b, burgers, nu, N) - singleEdgeImage_x(x, -b / 2, a, b, burgers, nu, N)) / b;
+    return s_xx * x + s_xy * y;
+}
+
+double totSingleEdge_x(double x, double y, double a, double b, double burgers, double nu, int N)
+{
+
+    return singleEdgeImage_x(x, y, a, b, burgers, nu, N) - singleEdgeCorrection_x(x, y, a, b, burgers, nu, N);
+}
+
+
+
 double singleEdgeDisplacement_y(double x, double y, double burgers, double nu)
 {
 
@@ -19,4 +53,38 @@ double singleEdgeDisplacement_y(double x, double y, double burgers, double nu)
     double term12 = (pow(x, 2) - pow(y, 2)) / (4 * (1 - nu) * (pow(x, 2) + pow(y, 2)));
 
     return (factor1 * (term11 + term12));
+}
+
+double singleEdgeImage_y(double x, double y, double a, double b, double burgers, double nu, int N)
+{
+    double image_sum = 0;
+    double x_update = 0;
+    double y_update = 0;
+
+    for (double i = -N; i <= N; i++)
+    {
+        for (double j = -N; j <= N; j++)
+        {
+            vector<double> R = {i * a, j * b};
+            x_update = x - R[0];
+            y_update = y - R[1];
+            image_sum += singleEdgeDisplacement_y(x_update, y_update, burgers, nu);
+        }
+    }
+    return image_sum;
+}
+
+
+double singleEdgeCorrection_y(double x, double y, double a, double b, double burgers, double nu, int N)
+{
+    double s_yx = (singleEdgeImage_y(a / 2, y, a, b, burgers, nu, N) - singleEdgeImage_y(-a / 2, y, a, b, burgers, nu, N)) / a;
+    double s_yy = (singleEdgeImage_y(x, b / 2, a, b, burgers, nu, N) - singleEdgeImage_y(x, -b / 2, a, b, burgers, nu, N)) / b;
+    return s_yx * x + s_yy * y;
+}
+
+
+double totSingleEdge_y(double x, double y, double a, double b, double burgers, double nu, int N)
+{
+    double output = singleEdgeImage_y(x, y, a, b, burgers, nu, N) - (singleEdgeCorrection_y(x, y, a, b, burgers, nu, N));
+    return output;
 }
