@@ -40,7 +40,7 @@ double singleEdgeCorrection_x(double x, double y, double a, double b, double bur
 double totSingleEdge_x(double x, double y, double a, double b, double burgers, double nu, int N)
 {
 
-    return singleEdgeImage_x(x, y, a, b, burgers, nu, N) - singleEdgeCorrection_x(x, y, a, b, burgers, nu, N);
+    return singleEdgeImage_x(x, y, a, b, burgers, nu, N) + singleEdgeCorrection_x(x, y, a, b, burgers, nu, N);
 }
 
 
@@ -85,6 +85,6 @@ double singleEdgeCorrection_y(double x, double y, double a, double b, double bur
 
 double totSingleEdge_y(double x, double y, double a, double b, double burgers, double nu, int N)
 {
-    double output = singleEdgeImage_y(x, y, a, b, burgers, nu, N) - (singleEdgeCorrection_y(x, y, a, b, burgers, nu, N));
+    double output = singleEdgeDisplacement_y(x, y, burgers, nu);
     return output;
 }
