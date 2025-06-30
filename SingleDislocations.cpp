@@ -1,6 +1,13 @@
 #include "SingleDislocations.h"
 const double pi = M_PI;
 
+double singleScrew(double x, double y, double burgers)
+{
+
+    double u_z = burgers * (atan2(y, x) / (2 * pi));
+    return u_z;
+}
+
 double singleEdgeDisplacement_x(double x, double y, double burgers, double nu)
 {
 
@@ -43,8 +50,6 @@ double totSingleEdge_x(double x, double y, double a, double b, double burgers, d
     return singleEdgeImage_x(x, y, a, b, burgers, nu, N) + singleEdgeCorrection_x(x, y, a, b, burgers, nu, N);
 }
 
-
-
 double singleEdgeDisplacement_y(double x, double y, double burgers, double nu)
 {
 
@@ -74,7 +79,6 @@ double singleEdgeImage_y(double x, double y, double a, double b, double burgers,
     return image_sum;
 }
 
-
 double singleEdgeCorrection_y(double x, double y, double a, double b, double burgers, double nu, int N)
 {
     double s_yx = (singleEdgeImage_y(a / 2, y, a, b, burgers, nu, N) - singleEdgeImage_y(-a / 2, y, a, b, burgers, nu, N)) / a;
@@ -82,9 +86,8 @@ double singleEdgeCorrection_y(double x, double y, double a, double b, double bur
     return s_yx * x + s_yy * y;
 }
 
-
 double totSingleEdge_y(double x, double y, double a, double b, double burgers, double nu, int N)
 {
-    double output = singleEdgeDisplacement_y(x, y, burgers, nu);
+    double output = singleEdgeDisplacement_y(x, y, burgers, nu) - singleEdgeImage_y(a, b, a, b, burgers, nu, N);
     return output;
 }

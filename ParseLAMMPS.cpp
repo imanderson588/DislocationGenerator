@@ -102,6 +102,16 @@ void displaceAtoms(int dislocationType, string &inputFile, string &outputFilePat
                 words[2] = to_string(stof(words[2]) + u_x);
                 words[3] = to_string(stof(words[3]) + u_y);
             }
+
+            if (dislocationType == 4)
+
+            {
+                // Single edge displacement
+                double u_z = singleScrew(x_value, y_value, burgers);
+
+                words[4] = to_string(stof(words[4]) + u_z);
+            }
+
             string newLine = recombine(words);
             outputFile << newLine << "\n";
         }

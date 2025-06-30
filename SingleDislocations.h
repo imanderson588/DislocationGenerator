@@ -8,6 +8,8 @@
 
 using namespace std;
 
+double singleScrew(double x, double y, double burgers);
+
 double singleEdgeDisplacement_x(double x, double y, double burgers, double nu);
 double singleEdgeImage_x(double x, double y, double a, double b, double burgers, double nu, int N);
 double singleEdgeCorrection_x(double x, double y, double a, double b, double burgers, double nu, int N);
