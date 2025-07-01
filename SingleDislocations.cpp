@@ -40,14 +40,14 @@ double singleEdgeImage_x(double x, double y, double a, double b, double burgers,
 double singleEdgeCorrection_x(double x, double y, double a, double b, double burgers, double nu, int N)
 {
     double s_xx = (singleEdgeImage_x(a / 2, y, a, b, burgers, nu, N) - singleEdgeImage_x(-a / 2, y, a, b, burgers, nu, N)) / a;
-    double s_xy = (singleEdgeImage_x(x, b / 2, a, b, burgers, nu, N) - singleEdgeImage_x(x, -b / 2, a, b, burgers, nu, N)) / b;
-    return s_xx * x + s_xy * y;
+    double s_xy = (singleEdgeImage_x(a/2, -b / 2, a, b, burgers, nu, N) - singleEdgeImage_x(a/2, b / 2, a, b, burgers, nu, N));
+    return  s_xy * y;
 }
 
 double totSingleEdge_x(double x, double y, double a, double b, double burgers, double nu, int N)
 {
 
-    return singleEdgeImage_x(x, y, a, b, burgers, nu, N) + singleEdgeCorrection_x(x, y, a, b, burgers, nu, N);
+    return singleEdgeDisplacement_x(x, y, burgers, nu);// + singleEdgeCorrection_x(x, y, a, b, burgers, nu, N);
 }
 
 double singleEdgeDisplacement_y(double x, double y, double burgers, double nu)
@@ -88,6 +88,6 @@ double singleEdgeCorrection_y(double x, double y, double a, double b, double bur
 
 double totSingleEdge_y(double x, double y, double a, double b, double burgers, double nu, int N)
 {
-    double output = singleEdgeDisplacement_y(x, y, burgers, nu) - singleEdgeImage_y(a, b, a, b, burgers, nu, N);
+    double output = singleEdgeDisplacement_y(x, y, burgers, nu) ;//- singleEdgeImage_y(a/2, b/2, a, b, burgers, nu, N);
     return output;
 }
