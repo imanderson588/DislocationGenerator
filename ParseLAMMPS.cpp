@@ -77,10 +77,10 @@ void displaceAtoms(int dislocationType, string &inputFile, string &outputFilePat
                 // Edge displacements
                 double u_x = totEdge_x(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N);
                 double u_y = totEdge_y(x_value, y_value, a, b, x1, y1, x2, y2, burgers, nu, N);
-                double u_y2 = edgeDipoleTilt(x_value, y_value, a, b, burgers, x1, x2, N);
-                words[2] = to_string(stof(words[2]) + u_x);
+                // double u_y2 = edgeDipoleTilt(x_value, y_value, a, b, burgers, x1, x2, N);
+                words[2] = to_string(stof(words[2]) + u_x + 13.97);
                 words[3] = to_string(stof(words[3]) + u_y);
-                words[3] = to_string(stof(words[3]) + u_y2);
+                // words[3] = to_string(stof(words[3]) + u_y2);
             }
             if (dislocationType == 1)
             {
@@ -96,11 +96,20 @@ void displaceAtoms(int dislocationType, string &inputFile, string &outputFilePat
 
             {
                 // Single edge displacement
-                double u_x = totSingleEdge_x(x_value, y_value, a, b, burgers, nu, N);
-                double u_y = totSingleEdge_y(x_value, y_value, a, b, burgers, nu, N);
-
-                words[2] = to_string(stof(words[2]) + u_x);
-                words[3] = to_string(stof(words[3]) + u_y);
+                // double u_x = totSingleEdge_x(x_value, y_value, a, b, burgers, nu, N);
+                // double u_y = totSingleEdge_y(x_value, y_value, a, b, burgers, nu, N);
+                if (y_value > 0)
+                {
+                    double u_x = 0;
+                    words[2] = to_string(stof(words[2]) + u_x);
+                }
+                else
+                {
+                    double u_x = -1.575;
+                    words[2] = to_string(stof(words[2]) + u_x);
+                    words[2] = to_string(stof(words[2]) + (stof(words[2]) * 0.0123));
+                }
+                // words[3] = to_string(stof(words[3]) + u_y);
             }
 
             if (dislocationType == 4)
