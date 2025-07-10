@@ -44,7 +44,7 @@ double edgeCorrection_x(double x, double y, double a, double b, double x1, doubl
 double totEdge_x(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
 {
 
-    //return edgeImage_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeCorrection_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N);
+    // return edgeImage_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeCorrection_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N);
     return edgeDisplacement_x(x, y, x1, y1, x2, y2, burgers, nu);
 }
 
