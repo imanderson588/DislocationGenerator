@@ -46,16 +46,14 @@ double screwDipoleCorrection(double x, double y, double a, double b, double burg
 
     double s_x = screwDipoleImage(a / 2, -b / 2, a, b, burgers, loc1, loc2, N) - screwDipoleImage(-a / 2, -b / 2, a, b, burgers, loc1, loc2, N);
     double s_y = screwDipoleImage(-a / 2, b / 2, a, b, burgers, loc1, loc2, N) - screwDipoleImage(-a / 2, -b / 2, a, b, burgers, loc1, loc2, N);
-    double c_x = x;
-    double c_y = y;
-    double correction = (s_x * c_x) + (s_y * c_y);
+    double correction = (s_x / a) * x + (s_y / b) * y;
 
     return correction;
 }
 
 double screwDipoleTilt(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N)
 {
-    double u_z = b * ((y / b));
+    double u_z = 0.5 * burgers * y / b;
     return u_z;
 }
 
