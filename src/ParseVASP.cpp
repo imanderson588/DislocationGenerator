@@ -1,11 +1,13 @@
 #include "ParseVASP.h"
 #include "ParseLAMMPS.h"
 #include "EdgeDisplacement.h"
-#include "ScrewDisplacement.h"
+#include <fstream>
+#include <string>
 
-void displaceAtomsVasp(string &inputFile, string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N)
+using namespace std;
+
+void displaceAtomsVasp(const string& inputFile, const string& outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N)
 {
-
     string lineContents;
     ofstream outputFile(outputFilePath);
     ifstream inputData(inputFile);
@@ -18,11 +20,9 @@ void displaceAtomsVasp(string &inputFile, string &outputFilePath, double a, doub
 
     while (getline(inputData, lineContents))
     {
-
         if (lineNumber == 0)
         {
             outputFile << lineContents << "\n";
-            // modifyFlag = 1;
             lineNumber++;
             continue;
         }
@@ -64,15 +64,13 @@ void displaceAtomsVasp(string &inputFile, string &outputFilePath, double a, doub
         {
             vector<string> words = splitBySpaces(lineContents);
             numAtoms = stoi(words[0]); //+ stoi(words[1]);
-            outputFile
-                << lineContents << "\n";
+            outputFile << lineContents << "\n";
             lineNumber++;
             continue;
         }
 
         if (lineNumber > 7 && lineNumber <= (7 + numAtoms))
         {
-
             vector<string> words = splitBySpaces(lineContents);
 
             double x_value = stod(words[0]) * xLength;

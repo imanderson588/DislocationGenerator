@@ -1,9 +1,10 @@
 #include "EdgeDisplacement.h"
-#include "ScrewDisplacement.h"
+#include <cmath>
+
+static constexpr double pi = M_PI;
 
 double edgeDisplacement_x(double x, double y, double x1, double y1, double x2, double y2, double burgers, double nu)
 {
-
     double factor1 = burgers / (2 * pi);
     double theta1 = atan2(y - y1, -(x - x1));
     double term1 = ((x - x1) * (y - y1)) / (2 * (1 - nu) * (pow(x - x1, 2) + pow(y - y1, 2)));
@@ -18,17 +19,12 @@ double edgeDisplacement_x(double x, double y, double x1, double y1, double x2, d
 double edgeImage_x(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
 {
     double image_sum = 0;
-    double x_update = 0;
-    double y_update = 0;
 
-    for (double i = -N; i <= N; i++)
+    for (int i = -N; i <= N; i++)
     {
-        for (double j = -N; j <= N; j++)
+        for (int j = -N; j <= N; j++)
         {
-            vector<double> R = {i * a, j * b};
-            x_update = x - R[0];
-            y_update = y - R[1];
-            image_sum += edgeDisplacement_x(x_update, y_update, x1, y1, x2, y2, burgers, nu);
+            image_sum += edgeDisplacement_x(x - i * a, y - j * b, x1, y1, x2, y2, burgers, nu);
         }
     }
     return image_sum;
@@ -48,7 +44,6 @@ double totEdge_x(double x, double y, double a, double b, double x1, double y1, d
 
 double edgeDisplacement_y(double x, double y, double x1, double y1, double x2, double y2, double burgers, double nu)
 {
-
     double factor1 = -burgers / (2 * pi);
     double term11 = ((1 - 2 * nu) / (4 * (1 - nu))) * log(pow(x - x1, 2) + pow(y - y1, 2));
     double term12 = (pow(x - x1, 2) - pow(y - y1, 2)) / (4 * (1 - nu) * (pow(x - x1, 2) + pow(y - y1, 2)));
@@ -62,17 +57,12 @@ double edgeDisplacement_y(double x, double y, double x1, double y1, double x2, d
 double edgeImage_y(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
 {
     double image_sum = 0;
-    double x_update = 0;
-    double y_update = 0;
 
-    for (double i = -N; i <= N; i++)
+    for (int i = -N; i <= N; i++)
     {
-        for (double j = -N; j <= N; j++)
+        for (int j = -N; j <= N; j++)
         {
-            vector<double> R = {i * a, j * b};
-            x_update = x - R[0];
-            y_update = y - R[1];
-            image_sum += edgeDisplacement_y(x_update, y_update, x1, y1, x2, y2, burgers, nu);
+            image_sum += edgeDisplacement_y(x - i * a, y - j * b, x1, y1, x2, y2, burgers, nu);
         }
     }
     return image_sum;

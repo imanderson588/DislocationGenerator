@@ -1,8 +1,10 @@
 #include "ScrewDisplacement.h"
+#include <cmath>
+
+static constexpr double pi = M_PI;
 
 double screwDisplacement(double x, double y, double b)
 {
-
     double theta = atan2(y, x);
     double u_z = b * (theta / (2 * pi));
 
@@ -11,7 +13,6 @@ double screwDisplacement(double x, double y, double b)
 
 double screwDipoleDisplacement(double x, double y, double burgers, double loc1, double loc2)
 {
-
     double theta1 = atan2(y, (x - loc1));
     double theta2 = atan2(y, (x - loc2));
     double frac = (theta1 - theta2) / (2 * pi);
@@ -23,19 +24,13 @@ double screwDipoleDisplacement(double x, double y, double burgers, double loc1, 
 
 double screwDipoleImage(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N)
 {
-
     double image_sum = 0;
-    double x_update = 0;
-    double y_update = 0;
 
-    for (double i = -N; i <= N; i++)
+    for (int i = -N; i <= N; i++)
     {
-        for (double j = -N; j <= N; j++)
+        for (int j = -N; j <= N; j++)
         {
-            vector<double> R = {i * a, j * b};
-            x_update = x - R[0];
-            y_update = y - R[1];
-            image_sum += screwDipoleDisplacement(x_update, y_update, burgers, loc1, loc2);
+            image_sum += screwDipoleDisplacement(x - i * a, y - j * b, burgers, loc1, loc2);
         }
     }
     return image_sum;
@@ -43,7 +38,6 @@ double screwDipoleImage(double x, double y, double a, double b, double burgers, 
 
 double screwDipoleCorrection(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N)
 {
-
     double s_x = screwDipoleImage(a / 2, -b / 2, a, b, burgers, loc1, loc2, N) - screwDipoleImage(-a / 2, -b / 2, a, b, burgers, loc1, loc2, N);
     double s_y = screwDipoleImage(-a / 2, b / 2, a, b, burgers, loc1, loc2, N) - screwDipoleImage(-a / 2, -b / 2, a, b, burgers, loc1, loc2, N);
     double correction = (s_x / a) * x + (s_y / b) * y;
