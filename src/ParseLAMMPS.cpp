@@ -3,6 +3,7 @@
 #include "ScrewDisplacement.h"
 #include "SingleDislocations.h"
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 using namespace std;
@@ -35,11 +36,61 @@ string recombine(const vector<string> &words)
     return oss.str();
 }
 
+static bool atomOverlapsDislocation(double ax, double ay, double x1, double y1, double x2, double y2, int dislocationType, double tol = 1e-6)
+{
+    double dx1 = ax - x1, dy1 = ay - y1;
+    if (dx1 * dx1 + dy1 * dy1 < tol * tol)
+        return true;
+
+    if (dislocationType == 0 || dislocationType == 1)
+    {
+        double dx2 = ax - x2, dy2 = ay - y2;
+        if (dx2 * dx2 + dy2 * dy2 < tol * tol)
+            return true;
+    }
+
+    return false;
+}
+
 void displaceAtoms(int dislocationType, const string &inputFile, const string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N, double bwidth)
 {
     string lineContents;
-    ofstream outputFile(outputFilePath);
     ifstream inputData(inputFile);
+
+    // First pass: check that no atomic position coincides with a dislocation core
+    {
+        int checkFlag = 0;
+        while (getline(inputData, lineContents))
+        {
+            if (lineContents == "Atoms # atomic")
+            {
+                checkFlag = 1;
+                continue;
+            }
+            if (lineContents == "Velocities")
+                break;
+            if (lineContents.empty() || !checkFlag)
+                continue;
+
+            vector<string> words = splitBySpaces(lineContents);
+            if (words.size() < 4)
+                continue;
+            double ax = stod(words[2]);
+            double ay = stod(words[3]);
+
+            if (atomOverlapsDislocation(ax, ay, x1, y1, x2, y2, dislocationType))
+            {
+                cerr << "Error: dislocation core overlaps with an atomic position (atom at x=" << ax << ", y=" << ay << "). Aborting.\n";
+                inputData.close();
+                return;
+            }
+        }
+        // Rewind for second pass
+        inputData.clear();
+        inputData.seekg(0);
+    }
+
+    ofstream outputFile(outputFilePath);
     int modifyFlag = 0;
 
     while (getline(inputData, lineContents))
