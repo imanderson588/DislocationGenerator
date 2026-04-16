@@ -53,7 +53,11 @@ static bool positionOverlapsAnyAtom(double px, double py, const vector<double> &
 static void adjustPosition(double &x, double &y, const vector<double> &atomX, const vector<double> &atomY, double tol, double step,
                            double xlo, double xhi, double ylo, double yhi)
 {
-    for (int ring = 1; ring <= 10000; ++ring)
+    // Search only within a local radius (20 steps = 2*a) to stay near the given position.
+    // The interstitial region between neighboring atoms is always within a few fractions of
+    // the lattice parameter, so there is no need to search further than this.
+    const int maxRings = 20;
+    for (int ring = 1; ring <= maxRings; ++ring)
     {
         double r = ring * step;
         int nAngles = max(8, ring * 4);
@@ -72,7 +76,8 @@ static void adjustPosition(double &x, double &y, const vector<double> &atomX, co
             }
         }
     }
-    cerr << "Warning: could not find a non-overlapping position within search range. Proceeding with original coordinates.\n";
+    cerr << "Warning: could not find a non-overlapping interstitial position within " << maxRings * step
+         << " of the given coordinates. Proceeding with original coordinates.\n";
 }
 
 void displaceAtoms(int dislocationType, const string &inputFile, const string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N, double bwidth)
