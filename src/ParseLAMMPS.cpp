@@ -50,7 +50,8 @@ static bool positionOverlapsAnyAtom(double px, double py, const vector<double> &
     return false;
 }
 
-static void adjustPosition(double &x, double &y, const vector<double> &atomX, const vector<double> &atomY, double tol, double step)
+static void adjustPosition(double &x, double &y, const vector<double> &atomX, const vector<double> &atomY, double tol, double step,
+                           double xlo, double xhi, double ylo, double yhi)
 {
     for (int ring = 1; ring <= 10000; ++ring)
     {
@@ -61,6 +62,8 @@ static void adjustPosition(double &x, double &y, const vector<double> &atomX, co
             double angle = 2.0 * PI * k / nAngles;
             double tx = x + r * cos(angle);
             double ty = y + r * sin(angle);
+            if (tx < xlo || tx > xhi || ty < ylo || ty > yhi)
+                continue;
             if (!positionOverlapsAnyAtom(tx, ty, atomX, atomY, tol))
             {
                 x = tx;
@@ -77,9 +80,10 @@ void displaceAtoms(int dislocationType, const string &inputFile, const string &o
     string lineContents;
     ifstream inputData(inputFile);
 
-    // First pass: collect all atom positions and adjust dislocation cores if needed
+    // First pass: collect cell bounds and atom positions, then adjust dislocation cores if needed
     {
         vector<double> atomX, atomY;
+        double xlo = -1e300, xhi = 1e300, ylo = -1e300, yhi = 1e300;
         int checkFlag = 0;
         while (getline(inputData, lineContents))
         {
@@ -90,6 +94,23 @@ void displaceAtoms(int dislocationType, const string &inputFile, const string &o
             }
             if (lineContents == "Velocities")
                 break;
+
+            if (!checkFlag)
+            {
+                // Parse box bounds from header lines like "lo hi xlo xhi"
+                vector<string> words = splitBySpaces(lineContents);
+                if (words.size() == 4 && words[2] == "xlo" && words[3] == "xhi")
+                {
+                    xlo = stod(words[0]);
+                    xhi = stod(words[1]);
+                }
+                else if (words.size() == 4 && words[2] == "ylo" && words[3] == "yhi")
+                {
+                    ylo = stod(words[0]);
+                    yhi = stod(words[1]);
+                }
+            }
+
             if (lineContents.empty() || !checkFlag)
                 continue;
 
@@ -108,7 +129,7 @@ void displaceAtoms(int dislocationType, const string &inputFile, const string &o
         {
             cerr << "Warning: dislocation 1 position (" << x1 << ", " << y1
                  << ") overlaps with an atomic position.\n";
-            adjustPosition(x1, y1, atomX, atomY, tol, step);
+            adjustPosition(x1, y1, atomX, atomY, tol, step, xlo, xhi, ylo, yhi);
             cerr << "         Adjusted dislocation 1 position to (" << x1 << ", " << y1 << ").\n";
         }
 
@@ -118,7 +139,7 @@ void displaceAtoms(int dislocationType, const string &inputFile, const string &o
             {
                 cerr << "Warning: dislocation 2 position (" << x2 << ", " << y2
                      << ") overlaps with an atomic position.\n";
-                adjustPosition(x2, y2, atomX, atomY, tol, step);
+                adjustPosition(x2, y2, atomX, atomY, tol, step, xlo, xhi, ylo, yhi);
                 cerr << "         Adjusted dislocation 2 position to (" << x2 << ", " << y2 << ").\n";
             }
         }
