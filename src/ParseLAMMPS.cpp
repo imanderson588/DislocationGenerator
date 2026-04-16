@@ -50,22 +50,25 @@ static bool positionOverlapsAnyAtom(double px, double py, const vector<double> &
     return false;
 }
 
-static void adjustPosition(double &x, double &y, const vector<double> &atomX, const vector<double> &atomY, double tol, double step,
+static void adjustPosition(double &x, double &y, const vector<double> &atomX, const vector<double> &atomY, double tol,
                            double xlo, double xhi, double ylo, double yhi)
 {
-    // Search only within a local radius (20 steps = 2*a) to stay near the given position.
-    // The interstitial region between neighboring atoms is always within a few fractions of
-    // the lattice parameter, so there is no need to search further than this.
-    const int maxRings = 20;
-    for (int ring = 1; ring <= maxRings; ++ring)
+    // Step 0.01 Å at a time along ±x then ±y, expanding outward until a
+    // non-overlapping interstitial site is found.
+    const double step = 0.01;
+    const int maxSteps = 10000; // search up to 100 Å away
+    for (int n = 1; n <= maxSteps; ++n)
     {
-        double r = ring * step;
-        int nAngles = max(8, ring * 4);
-        for (int k = 0; k < nAngles; ++k)
+        double offsets[4][2] = {
+            { x + n * step, y },
+            { x - n * step, y },
+            { x, y + n * step },
+            { x, y - n * step }
+        };
+        for (int d = 0; d < 4; ++d)
         {
-            double angle = 2.0 * PI * k / nAngles;
-            double tx = x + r * cos(angle);
-            double ty = y + r * sin(angle);
+            double tx = offsets[d][0];
+            double ty = offsets[d][1];
             if (tx < xlo || tx > xhi || ty < ylo || ty > yhi)
                 continue;
             if (!positionOverlapsAnyAtom(tx, ty, atomX, atomY, tol))
@@ -76,8 +79,8 @@ static void adjustPosition(double &x, double &y, const vector<double> &atomX, co
             }
         }
     }
-    cerr << "Warning: could not find a non-overlapping interstitial position within " << maxRings * step
-         << " of the given coordinates. Proceeding with original coordinates.\n";
+    cerr << "Warning: could not find a non-overlapping interstitial position within " << maxSteps * step
+         << " Angstroms of the given coordinates. Proceeding with original coordinates.\n";
 }
 
 void displaceAtoms(int dislocationType, const string &inputFile, const string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N, double bwidth)
@@ -147,15 +150,14 @@ void displaceAtoms(int dislocationType, const string &inputFile, const string &o
         }
         double minDist = (minDist2 < LARGE_DISTANCE && atomX.size() > 1) ? sqrt(minDist2) : a;
 
-        // Tolerance for overlap and step size for adjustment (relative to nearest-neighbour distance)
+        // Tolerance for overlap check (relative to nearest-neighbour distance)
         const double tol = 0.3 * minDist;
-        const double step = 0.1 * minDist;
 
         if (positionOverlapsAnyAtom(x1, y1, atomX, atomY, tol))
         {
             cerr << "Warning: dislocation 1 position (" << x1 << ", " << y1
                  << ") overlaps with an atomic position.\n";
-            adjustPosition(x1, y1, atomX, atomY, tol, step, xlo, xhi, ylo, yhi);
+            adjustPosition(x1, y1, atomX, atomY, tol, xlo, xhi, ylo, yhi);
             cerr << "         Adjusted dislocation 1 position to (" << x1 << ", " << y1 << ").\n";
         }
 
@@ -165,7 +167,7 @@ void displaceAtoms(int dislocationType, const string &inputFile, const string &o
             {
                 cerr << "Warning: dislocation 2 position (" << x2 << ", " << y2
                      << ") overlaps with an atomic position.\n";
-                adjustPosition(x2, y2, atomX, atomY, tol, step, xlo, xhi, ylo, yhi);
+                adjustPosition(x2, y2, atomX, atomY, tol, xlo, xhi, ylo, yhi);
                 cerr << "         Adjusted dislocation 2 position to (" << x2 << ", " << y2 << ").\n";
             }
         }
