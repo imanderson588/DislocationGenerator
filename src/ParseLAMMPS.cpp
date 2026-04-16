@@ -100,9 +100,9 @@ void displaceAtoms(int dislocationType, const string &inputFile, const string &o
             atomY.push_back(stod(words[3]));
         }
 
-        // Tolerance for overlap and step size for adjustment
-        const double tol = 1e-6;
-        const double step = 1e-4;
+        // Tolerance for overlap and step size for adjustment (relative to lattice parameter)
+        const double tol = 0.3 * a;
+        const double step = 0.1 * a;
 
         if (positionOverlapsAnyAtom(x1, y1, atomX, atomY, tol))
         {
