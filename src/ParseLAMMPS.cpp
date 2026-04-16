@@ -126,9 +126,30 @@ void displaceAtoms(int dislocationType, const string &inputFile, const string &o
             atomY.push_back(stod(words[3]));
         }
 
-        // Tolerance for overlap and step size for adjustment (relative to lattice parameter)
-        const double tol = 0.3 * a;
-        const double step = 0.1 * a;
+        // Compute the minimum 2-D nearest-neighbour distance between atoms so that
+        // the overlap tolerance and search step are always correctly scaled to the
+        // actual inter-atomic spacing rather than to the (much larger) supercell
+        // dimension `a`.  Using `a` directly caused the tolerance to be orders of
+        // magnitude too large for dense structures (e.g. rocksalt), making it
+        // impossible to find any non-overlapping interstitial placement.
+        constexpr double LARGE_DISTANCE = 1e300;
+        double minDist2 = LARGE_DISTANCE;
+        for (size_t i = 0; i < atomX.size(); ++i)
+        {
+            for (size_t j = i + 1; j < atomX.size(); ++j)
+            {
+                double dx = atomX[i] - atomX[j];
+                double dy = atomY[i] - atomY[j];
+                double d2 = dx * dx + dy * dy;
+                if (d2 < minDist2)
+                    minDist2 = d2;
+            }
+        }
+        double minDist = (minDist2 < LARGE_DISTANCE && atomX.size() > 1) ? sqrt(minDist2) : a;
+
+        // Tolerance for overlap and step size for adjustment (relative to nearest-neighbour distance)
+        const double tol = 0.3 * minDist;
+        const double step = 0.1 * minDist;
 
         if (positionOverlapsAnyAtom(x1, y1, atomX, atomY, tol))
         {
