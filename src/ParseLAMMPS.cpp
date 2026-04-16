@@ -2,11 +2,14 @@
 #include "EdgeDisplacement.h"
 #include "ScrewDisplacement.h"
 #include "SingleDislocations.h"
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
 using namespace std;
+
+static constexpr double PI = M_PI;
 
 vector<string> splitBySpaces(const string &line)
 {
@@ -36,20 +39,37 @@ string recombine(const vector<string> &words)
     return oss.str();
 }
 
-static bool atomOverlapsDislocation(double ax, double ay, double x1, double y1, double x2, double y2, int dislocationType, double tol = 1e-6)
+static bool positionOverlapsAnyAtom(double px, double py, const vector<double> &atomX, const vector<double> &atomY, double tol)
 {
-    double dx1 = ax - x1, dy1 = ay - y1;
-    if (dx1 * dx1 + dy1 * dy1 < tol * tol)
-        return true;
-
-    if (dislocationType == 0 || dislocationType == 1)
+    for (size_t i = 0; i < atomX.size(); ++i)
     {
-        double dx2 = ax - x2, dy2 = ay - y2;
-        if (dx2 * dx2 + dy2 * dy2 < tol * tol)
+        double dx = atomX[i] - px, dy = atomY[i] - py;
+        if (dx * dx + dy * dy < tol * tol)
             return true;
     }
-
     return false;
+}
+
+static void adjustPosition(double &x, double &y, const vector<double> &atomX, const vector<double> &atomY, double tol, double step)
+{
+    for (int ring = 1; ring <= 10000; ++ring)
+    {
+        double r = ring * step;
+        int nAngles = max(8, ring * 4);
+        for (int k = 0; k < nAngles; ++k)
+        {
+            double angle = 2.0 * PI * k / nAngles;
+            double tx = x + r * cos(angle);
+            double ty = y + r * sin(angle);
+            if (!positionOverlapsAnyAtom(tx, ty, atomX, atomY, tol))
+            {
+                x = tx;
+                y = ty;
+                return;
+            }
+        }
+    }
+    cerr << "Warning: could not find a non-overlapping position within search range. Proceeding with original coordinates.\n";
 }
 
 void displaceAtoms(int dislocationType, const string &inputFile, const string &outputFilePath, double a, double b, double burgers, double x1, double y1, double x2, double y2, double nu, int N, double bwidth)
@@ -57,8 +77,9 @@ void displaceAtoms(int dislocationType, const string &inputFile, const string &o
     string lineContents;
     ifstream inputData(inputFile);
 
-    // First pass: check that no atomic position coincides with a dislocation core
+    // First pass: collect all atom positions and adjust dislocation cores if needed
     {
+        vector<double> atomX, atomY;
         int checkFlag = 0;
         while (getline(inputData, lineContents))
         {
@@ -75,17 +96,34 @@ void displaceAtoms(int dislocationType, const string &inputFile, const string &o
             vector<string> words = splitBySpaces(lineContents);
             if (words.size() < 4)
                 continue;
-            double ax = stod(words[2]);
-            double ay = stod(words[3]);
+            atomX.push_back(stod(words[2]));
+            atomY.push_back(stod(words[3]));
+        }
 
-            if (atomOverlapsDislocation(ax, ay, x1, y1, x2, y2, dislocationType))
+        // Tolerance for overlap and step size for adjustment
+        const double tol = 1e-6;
+        const double step = 1e-4;
+
+        if (positionOverlapsAnyAtom(x1, y1, atomX, atomY, tol))
+        {
+            cerr << "Warning: dislocation 1 position (" << x1 << ", " << y1
+                 << ") overlaps with an atomic position.\n";
+            adjustPosition(x1, y1, atomX, atomY, tol, step);
+            cerr << "         Adjusted dislocation 1 position to (" << x1 << ", " << y1 << ").\n";
+        }
+
+        if (dislocationType == 0 || dislocationType == 1)
+        {
+            if (positionOverlapsAnyAtom(x2, y2, atomX, atomY, tol))
             {
-                cerr << "Error: dislocation core overlaps with an atomic position (atom at x=" << ax << ", y=" << ay << "). Aborting.\n";
-                inputData.close();
-                return;
+                cerr << "Warning: dislocation 2 position (" << x2 << ", " << y2
+                     << ") overlaps with an atomic position.\n";
+                adjustPosition(x2, y2, atomX, atomY, tol, step);
+                cerr << "         Adjusted dislocation 2 position to (" << x2 << ", " << y2 << ").\n";
             }
         }
-        // Rewind for second pass
+
+        // Rewind for displacement pass
         inputData.clear();
         inputData.seekg(0);
     }
