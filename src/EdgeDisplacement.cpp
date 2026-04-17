@@ -39,7 +39,10 @@ double edgeCorrection_x(double x, double y, double a, double b, double x1, doubl
 
 double totEdge_x(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
 {
-    return edgeImage_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N) - edgeCorrection_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N);
+    double image = edgeImage_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N);
+    double correction = edgeCorrection_x(x, y, a, b, x1, y1, x2, y2, burgers, nu, N);
+    double tilt = edgeDipoleTilt(x, y, a, b, burgers, x1, x2, N);
+    return image - correction - tilt;
 }
 
 double edgeDisplacement_y(double x, double y, double x1, double y1, double x2, double y2, double burgers, double nu)
@@ -77,8 +80,8 @@ double edgeCorrection_y(double x, double y, double a, double b, double x1, doubl
 
 double edgeDipoleTilt(double x, double y, double a, double b, double burgers, double loc1, double loc2, int N)
 {
-    double u_y = b * (y / b);
-    return u_y;
+    double u_x = 0.5 * burgers * y / b;
+    return u_x;
 }
 
 double totEdge_y(double x, double y, double a, double b, double x1, double y1, double x2, double y2, double burgers, double nu, int N)
